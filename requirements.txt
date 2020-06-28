@@ -1,1 +1,2 @@
 FaBo9Axis_MPU9250    
+"picamera[array]"
