@@ -1,3 +1,4 @@
 FaBo9Axis_MPU9250    
 "picamera[array]"
 opencv-python==3.4.6.27
+imutils
