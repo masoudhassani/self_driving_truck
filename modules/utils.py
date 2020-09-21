@@ -5,6 +5,7 @@ import os
 import pickle
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+from .lane import Lane
 
 # camera calibration function
 def calibrate_camera(main_dir):
@@ -54,7 +55,7 @@ def calibrate_camera(main_dir):
                 lst = [ret, cMat, coefs, rvects, tvects]
                 pickle.dump(lst, fp) 
                    
-    return ret, cMat, coefs, rvects, tvects
+    return [ret, cMat, coefs, rvects, tvects]
 
 
 # function to undistort a captured frame or image
@@ -109,7 +110,8 @@ def get_threshold(img, show=False):
     
     return comb_img
 
-def warp_to_lines(img, show=False):
+# perspective transform to create top view or eagle eye view
+def warp(img, show=False):
     x_shape, y_shape = img.shape[1], img.shape[0]
     middle_x = x_shape//2
     top_y = 2*y_shape//3
@@ -142,7 +144,8 @@ def warp_to_lines(img, show=False):
     Minv = cv2.getPerspectiveTransform(dst, src)
     warped = cv2.warpPerspective(img, M, (x_shape, y_shape), flags=cv2.INTER_LINEAR)
     
-    if show: side_by_side_plot(img, warped, 'Original', 'Warped Perspective')
+    if show: 
+        side_by_side_plot(img, warped, 'Original', 'Warped Perspective')
         
     return warped, M, Minv
 

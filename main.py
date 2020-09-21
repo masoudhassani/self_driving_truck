@@ -1,18 +1,18 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from modules.utils import *
+import matplotlib.image as mpimg
+from modules.utils import calibrate_camera
+from modules.lane_detector import LaneDetector
 
 # get all camera calibration images and calibrate the camera
-ret, cMat, coefs, rvects, tvects = calibrate_camera('resources/')
+# calibration = [ret, cMat, coefs, rvects, tvects] 
+calbiration = calibrate_camera('resources/')
 
-# undistort the frame
-frame = mpimg.imread('./resources/test_images/test1.jpg')
-undistorted_frame = undistort(frame, cMat, coefs)
+# instantiate a lane detector instance
+detector = LaneDetector(calbiration)
 
-# create the threshold frame
-threshold_img = get_threshold(undistorted_frame, show=False)
-cv2.imwrite('./threshold_test2.jpg', threshold_img)
+frame = mpimg.imread('./resources/test_images/test4.jpg')
+drawn_img = detector.detect(frame, show=False)
+cv2.imwrite('./final.jpg', cv2.cvtColor(drawn_img, cv2.COLOR_RGB2BGR))
 
-warped, M, Minv = warp_to_lines(threshold_img, show=False)
-cv2.imwrite('./warped.jpg', warped)
