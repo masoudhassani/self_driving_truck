@@ -17,7 +17,7 @@ class Camera:
             self.video_file = False
             self.cap = cv2.VideoCapture(source+cv2.CAP_DSHOW) 
         
-        _, self.frame = self.cap.read()
+        self.ret, self.frame = self.cap.read()
         self.aspect_ratio = self.frame.shape[1] / self.frame.shape[0]   # width/height
         self.stopped = False
 
@@ -38,7 +38,8 @@ class Camera:
         self.path = path   
         
         # start the camera thread
-        self.start()
+        if not self.video_file:
+            self.start()
 
     def pre_processing(self, img):
         processed_frame = cv2.filter2D(img, -1, self.kernel)
@@ -55,14 +56,16 @@ class Camera:
                 return
 
             # otherwise, read the next frame from the stream
-            _, self.frame = self.cap.read()
+            self.ret, self.frame = self.cap.read()
 
     def return_frame(self):
-        # return the frame most recently read
-        if self.video_file and self.frame is not None:
-            self.frame = imutils.resize(self.frame, width=self.frame_width)
+        # return next frame if video file
+        if self.video_file:
+            self.ret, self.frame = self.cap.read()
+            if self.ret:
+                self.frame = imutils.resize(self.frame, width=self.frame_width)
             
-        return self.frame
+        return self.ret, self.frame
 
     def stop(self):
         # indicate that the thread should be stopped

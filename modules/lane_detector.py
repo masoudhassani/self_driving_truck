@@ -267,11 +267,10 @@ class LaneDetector:
         ret, cMat, coefs, rvects, tvects = self.calibration
             
         undist = undistort(img, cMat, coefs)
-        cv2.imwrite('./undistort.jpg', undist)
         threshed = get_threshold(undist)
-        cv2.imwrite('./threshold.jpg', threshed)
+        #cv2.imshow('threshed',threshed)
         warped, M, Minv = warp(threshed)
-        cv2.imwrite('./warped.jpg', warped)
+        cv2.imshow('warped',warped)
         lane = self.find_lane(warped)
                     
         # To speed up processing, if we've had an easy time detecting the lane, do half the updates
